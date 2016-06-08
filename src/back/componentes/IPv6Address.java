@@ -52,7 +52,7 @@ public class IPv6Address implements Comparable<IPv6Address> {
 	 */
     public boolean verifyIP(String ip) {
         Pattern pattern = Pattern
-                .compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+                .compile("^(((([a-f]|[0-9]){1,4})|:):){7}\\2");
         return pattern.matcher(ip).matches();
     }
 }
