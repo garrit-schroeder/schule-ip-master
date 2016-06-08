@@ -11,11 +11,6 @@ public class Host implements Comparable<Host> {
 
     public Host(String iPv4Address) {
         this.iPv4Address = parseIP(iPv4Address);
-        this.iPv6Address = generateIpv6Address(this.iPv4Address);
-    }
-
-    private IPv6Address generateIpv6Address(IPv4Address iPv4Address) {
-        return new IPv6Address();
     }
 
     public IPv4Address parseIP(String line) {

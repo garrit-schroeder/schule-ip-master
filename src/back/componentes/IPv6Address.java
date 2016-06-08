@@ -6,21 +6,23 @@ import java.util.regex.Pattern;
  * Class to aggregate a PAddress Created by snazari on 29/11/14.
  */
 public class IPv6Address implements Comparable<IPv6Address> {
-    private final int[] address = {0, 0, 0, 0};
+    private final int[] address = {0, 0, 0, 0, 0, 0, 0, 0};
 
-    public IPv6Address() {
-    }
-
-    public IPv6Address(int okt0, int okt1, int okt2, int okt3) {
-        address[0] = okt0;
-        address[1] = okt1;
-        address[2] = okt2;
-        address[3] = okt3;
+    public IPv6Address(String okt0, String okt1, String okt2, String okt3, String okt4, String okt5, String okt6, String okt7) {
+        address[0] = Integer.parseInt(okt0, 16);
+        address[1] = Integer.parseInt(okt1, 16);
+        address[2] = Integer.parseInt(okt2, 16);
+        address[3] = Integer.parseInt(okt3, 16);
+        address[4] = Integer.parseInt(okt4, 16);
+        address[5] = Integer.parseInt(okt5, 16);
+        address[6] = Integer.parseInt(okt6, 16);
+        address[7] = Integer.parseInt(okt7, 16);
     }
 
     @Override
     public String toString() {
-        return address[0] + "." + address[1] + "." + address[2] + "." + address[3];
+        return Integer.toHexString(address[0]) + ":" + address[1] + ":" + address[2] + ":" + address[3] +
+                ":" + address[4] + ":" + address[5] + ":" + address[6] + ":" + address[7];
     }
 
     @Override
@@ -36,15 +38,6 @@ public class IPv6Address implements Comparable<IPv6Address> {
     @Override
     public boolean equals(Object o) {
         return this.toString().equals(o.toString());
-    }
-
-    /*
-     * Funktion to Parse a String to a IPAddress-Object
-	 */
-    public IPv6Address parseIP(String line) {
-        String[] tmpIPString = line.split("\\.");
-        return new IPv6Address(Integer.parseInt(tmpIPString[0]), Integer.parseInt(tmpIPString[1]),
-                Integer.parseInt(tmpIPString[2]), Integer.parseInt(tmpIPString[3]));
     }
 
     /*
