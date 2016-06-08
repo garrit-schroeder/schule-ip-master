@@ -1,7 +1,8 @@
 package front;
 
 import back.Data_controller;
-import back.componentes.IPAddress;
+import back.componentes.Host;
+import back.componentes.IPv4Address;
 import back.componentes.Network;
 import back.componentes.Subnet;
 import front.components.MainFrame;
@@ -10,6 +11,8 @@ import javax.swing.*;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by snazari on 29/11/14.
@@ -91,9 +94,7 @@ public class Interface_controller {
     public Set<String> loadHostsIntoDialog() {
         Set<String> addressSet = new TreeSet<String>();
         if (currentSubnet != null) {
-            for (IPAddress i : currentSubnet.getHosts()) {
-                addressSet.add(i.toString());
-            }
+            addressSet.addAll(currentSubnet.getHosts().stream().map(Host::getiPv4Address).collect(Collectors.toList()).stream().map((Function<IPv4Address, String>) IPv4Address::toString).collect(Collectors.toList()));
         }
         return addressSet;
     }
@@ -238,12 +239,12 @@ public class Interface_controller {
     }
 
     public void deleteSubnet(String subnet, String prefix) {
-        currentNetwork.deleteSubnet(new IPAddress().parseIP(subnet), Integer.parseInt(prefix));
+        currentNetwork.deleteSubnet(new IPv4Address().parseIP(subnet), Integer.parseInt(prefix));
         currentSubnet = null;
     }
 
     public void deleteHost(String subnet) {
-        currentSubnet.deleteHost(new IPAddress().parseIP(subnet));
+        currentSubnet.deleteHost(new IPv4Address().parseIP(subnet));
     }
 
     public boolean verifyPrefix(String ip) {

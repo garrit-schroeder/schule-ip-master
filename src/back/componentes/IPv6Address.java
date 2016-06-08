@@ -3,15 +3,15 @@ package back.componentes;
 import java.util.regex.Pattern;
 
 /**
- * Class to aggregate a IPAddress Created by snazari on 29/11/14.
+ * Class to aggregate a PAddress Created by snazari on 29/11/14.
  */
-public class IPAddress implements Comparable<IPAddress> {
+public class IPv6Address implements Comparable<IPv6Address> {
     private final int[] address = {0, 0, 0, 0};
 
-    public IPAddress() {
+    public IPv6Address() {
     }
 
-    public IPAddress(int okt0, int okt1, int okt2, int okt3) {
+    public IPv6Address(int okt0, int okt1, int okt2, int okt3) {
         address[0] = okt0;
         address[1] = okt1;
         address[2] = okt2;
@@ -24,7 +24,7 @@ public class IPAddress implements Comparable<IPAddress> {
     }
 
     @Override
-    public int compareTo(IPAddress o) {
+    public int compareTo(IPv6Address o) {
         return this.toString().equals(o.toString()) ? 0 : 1;
     }
 
@@ -41,9 +41,9 @@ public class IPAddress implements Comparable<IPAddress> {
     /*
      * Funktion to Parse a String to a IPAddress-Object
 	 */
-    public IPAddress parseIP(String line) {
+    public IPv6Address parseIP(String line) {
         String[] tmpIPString = line.split("\\.");
-        return new IPAddress(Integer.parseInt(tmpIPString[0]), Integer.parseInt(tmpIPString[1]),
+        return new IPv6Address(Integer.parseInt(tmpIPString[0]), Integer.parseInt(tmpIPString[1]),
                 Integer.parseInt(tmpIPString[2]), Integer.parseInt(tmpIPString[3]));
     }
 

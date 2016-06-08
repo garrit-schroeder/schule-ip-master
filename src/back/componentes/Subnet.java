@@ -11,12 +11,12 @@ import java.util.TreeSet;
 
 public class Subnet implements Comparable<Subnet> {
 
-    private final IPAddress subnetIP;
-    private final IPAddress broadcastIP;
+    private final IPv4Address subnetIP;
+    private final IPv4Address broadcastIP;
     private final Integer prefix;
-    private final Set<IPAddress> hosts = new TreeSet<IPAddress>();
+    private final Set<Host> hosts = new TreeSet<>();
 
-    public Subnet(IPAddress ip, Integer prefix) {
+    public Subnet(IPv4Address ip, Integer prefix) {
         this.subnetIP = ip;
         this.prefix = prefix;
         this.broadcastIP = getBroadcastAddress();
@@ -26,7 +26,7 @@ public class Subnet implements Comparable<Subnet> {
         return this.broadcastIP.toString();
     }
 
-    public IPAddress getSubnetIP() {
+    public IPv4Address getSubnetIP() {
         return subnetIP;
     }
 
@@ -35,18 +35,18 @@ public class Subnet implements Comparable<Subnet> {
     }
 
     public void addHost(String ip) {
-        hosts.add(new IPAddress().parseIP(ip));
+        hosts.add(new Host(ip));
     }
 
-    public Set<IPAddress> getHosts() {
+    public Set<Host> getHosts() {
         return hosts;
     }
 
-    public void deleteHost(IPAddress ip) {
-        Iterator<IPAddress> itr = hosts.iterator();
+    public void deleteHost(IPv4Address ip) {
+        Iterator<Host> itr = hosts.iterator();
         while (itr.hasNext()) {
-            IPAddress i = itr.next();
-            if (i.toString().equals(ip.toString())) {
+            Host i = itr.next();
+            if (i.getiPv4Address().toString().equals(ip.toString())) {
                 itr.remove();
             }
         }
@@ -80,7 +80,7 @@ public class Subnet implements Comparable<Subnet> {
         return sb.toString();
     }
 
-    private IPAddress getBroadcastAddress() {
+    private IPv4Address getBroadcastAddress() {
         int baseIPnumeric = 0;
         int i = 24;
 
@@ -92,7 +92,7 @@ public class Subnet implements Comparable<Subnet> {
         //Calculate Broadcastaddress without Subnets
         int netmaskNumeric = 0xffffffff << (32 - this.prefix);
         if (netmaskNumeric == 0xffffffff) {
-            return new IPAddress().parseIP("0.0.0.0");
+            return new IPv4Address().parseIP("0.0.0.0");
         }
         int numberOfBits;
         for (numberOfBits = 0; numberOfBits < 32; numberOfBits++) {
@@ -103,7 +103,7 @@ public class Subnet implements Comparable<Subnet> {
         for (int n = 0; n < (32 - numberOfBits); n++) {
             numberOfIPs = (numberOfIPs << 1) | 0x01;
         }
-        return new IPAddress().parseIP(convertNumericIpToSymbolic((baseIPnumeric & netmaskNumeric) + numberOfIPs));
+        return new IPv4Address().parseIP(convertNumericIpToSymbolic((baseIPnumeric & netmaskNumeric) + numberOfIPs));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package front.components;
 
-import back.componentes.IPAddress;
+import back.componentes.IPv4Address;
 import front.Interface_controller;
 
 import javax.swing.*;
@@ -229,7 +229,7 @@ public class TabbedPanelHosts extends TabbedPanel {
 
             if (result == JOptionPane.OK_OPTION) {
                 if (ip.getText() != null && !ip.getText().isEmpty() &&
-                        new IPAddress().verifyIP(ip.getText())) {
+                        new IPv4Address().verifyIP(ip.getText())) {
                     i_control.addNewHost(ip.getText());
                 } else if (verifyBinaryString(firstOctet.getText(), secondOctet.getText(),
                         thirdOctet.getText(), fourthOctet.getText())) {
