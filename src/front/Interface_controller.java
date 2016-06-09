@@ -265,6 +265,7 @@ public class Interface_controller {
     }
 
     public String generateNextSubnet() {
+        //todo ipv6
         if (getLastSubnet() != null) {
             Subnet lastSub = getLastSubnet();
             String[] octets = lastSub.getBroadcastIp().split("\\.");
