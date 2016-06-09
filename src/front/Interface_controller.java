@@ -265,29 +265,32 @@ public class Interface_controller {
     }
 
     public String generateNextSubnet() {
-        //todo ipv6
-        if (getLastSubnet() != null) {
+
+        if (getLastSubnet() != null && getLastSubnet().getSubnetIp() instanceof IPv4Address) {
             Subnet lastSub = getLastSubnet();
             String[] octets = lastSub.getBroadcastIp().split("\\.");
             String[] networkIPAddress = currentNetwork.getNetworkIP().toString().split("\\.");
             if ((Integer.parseInt(octets[3]) - Integer.parseInt(networkIPAddress[3])) == 255) {
-                octets[3] = new Integer(0).toString();
+                octets[3] = Integer.toString(0);
                 if ((Integer.parseInt(octets[2]) - Integer.parseInt(networkIPAddress[2])) == 255) {
-                    octets[2] = new Integer(0).toString();
-                    octets[1] = new Integer(Integer.parseInt(octets[1]) + 1).toString();
+                    octets[2] = Integer.toString(0);
+                    octets[1] = Integer.toString(Integer.parseInt(octets[1]) + 1);
                 } else {
-                    octets[2] = new Integer(Integer.parseInt(octets[2]) + 1).toString();
+                    octets[2] = Integer.toString(Integer.parseInt(octets[2]) + 1);
                 }
             } else {
-                octets[3] = new Integer(Integer.parseInt(octets[3]) + 1).toString();
+                octets[3] = Integer.toString(Integer.parseInt(octets[3]) + 1);
             }
             if (Integer.parseInt(octets[1]) > 255) {
                 return null;
             } else {
                 return octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
             }
-        } else {
+        } else if (getLastSubnet() != null && getLastSubnet().getSubnetIp() instanceof IPv6Address) {
+            //todo ipv6
             return null;
-        }
+        } else
+            return null;
     }
+
 }
