@@ -205,7 +205,7 @@ public class TabbedPanelSubnets extends TabbedPanel {
     }
 
     private void addSubnet() {
-        if (i_control.isNetworkSet() && i_control.getSubnetInfo() == null) {
+        if (i_control.isNetworkSet() && !i_control.isSubnetSet()) {
             String networkIp = i_control.getNetworkIp();
             String prefixString = i_control.getPrefix();
             JTextField prefix = new JTextField(2);
@@ -215,14 +215,12 @@ public class TabbedPanelSubnets extends TabbedPanel {
             int result = JOptionPane.showConfirmDialog(null, myPanel,
                     "Please Enter Your New Subnet Prefix", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION && i_control.verifyPrefix(prefix.getText())) {
-                i_control.addNewSubnet( networkIp, prefix.getText());
+                i_control.addNewSubnet(networkIp, prefix.getText());
                 refreshIndex();
             }
-        } else if (i_control.getSubnetInfo() != null && i_control.isNetworkSet()) {
-            String[] lastSubnet = i_control.getSubnetInfo();
-            String[] ip = lastSubnet[0].split("/");
+        } else if (!i_control.isSubnetSet() && i_control.isNetworkSet()) {
             if (i_control.generateNextSubnet() != null) {
-                i_control.addNewSubnet(i_control.generateNextSubnet(), ip[1]);
+                i_control.addNewSubnet(i_control.generateNextSubnet(), i_control.getSubnetPrefix());
                 refreshIndex();
             } else {
                 i_control.errorMessage("There are no further subnets possible for this network");
@@ -258,14 +256,14 @@ public class TabbedPanelSubnets extends TabbedPanel {
     }
 
     private void setNetClass() {
-        int num = Integer.parseInt(i_control.getNetworkIp());
-        if (isBetween(num, 10, 128)) {
+        int firstOkt = Integer.parseInt(i_control.getNetworkIp().split("\\.")[0]);
+        if (isBetween(firstOkt, 10, 128)) {
             modell_netclass.addElement("Class A");
-        } else if (isBetween(num, 129, 191)) {
+        } else if (isBetween(firstOkt, 129, 191)) {
             modell_netclass.addElement("Class B");
-        } else if (isBetween(num, 192, 223)) {
+        } else if (isBetween(firstOkt, 192, 223)) {
             modell_netclass.addElement("Class C");
-        } else if (isBetween(num, 224, 239)) {
+        } else if (isBetween(firstOkt, 224, 239)) {
             modell_netclass.addElement("Class E");
         } else {
             modell_netclass.addElement("Class D");

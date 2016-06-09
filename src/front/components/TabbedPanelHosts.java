@@ -259,12 +259,11 @@ public class TabbedPanelHosts extends TabbedPanel {
         for (String s : hosts) {
             modell_hosts.addElement(s);
         }
-        String[] tmpInfo = i_control.getSubnetInfo();
-        if (tmpInfo != null && tmpInfo.length > 0) {
+        if (i_control.getSubnetIp() != null && i_control.getSubnetPrefix() != null && i_control.getSubnetBroadcastIp() != null) {
             modell_subnetaddress.removeAllElements();
-            modell_subnetaddress.addElement(tmpInfo[0]);
+            modell_subnetaddress.addElement(i_control.getSubnetIp() + "/" + i_control.getSubnetPrefix());
             modell_broadcastaddress.removeAllElements();
-            modell_broadcastaddress.addElement(tmpInfo[1]);
+            modell_broadcastaddress.addElement(i_control.getSubnetBroadcastIp());
         }
     }
 

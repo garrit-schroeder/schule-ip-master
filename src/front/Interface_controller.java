@@ -45,15 +45,16 @@ public class Interface_controller {
         return currentNetwork.getPrefix().toString();
     }
 
-    public String[] getSubnetInfo() {
-        String[] tmp = {"", ""};
-        if (currentSubnet != null) {
-            tmp[0] = currentSubnet.getSubnetIp().toString() + "/" + currentSubnet.getPrefix().toString();
-            tmp[1] = currentSubnet.getBroadcastIp();
-            return tmp;
-        } else {
-            return null;
-        }
+    public String getSubnetBroadcastIp() {
+        return currentSubnet.getBroadcastIp();
+    }
+
+    public String getSubnetIp() {
+        return currentSubnet.getSubnetIp().toString();
+    }
+
+    public String getSubnetPrefix() {
+        return currentSubnet.getPrefix().toString();
     }
 
     public void setCurrentNetwork(String ipWithPrefix) {
@@ -118,7 +119,7 @@ public class Interface_controller {
                 errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
             }
         } else {
-            // TODO: 09.06.16  
+            // TODO: 09.06.16
             currentNetwork.addSubnet(new IPv6Address(ip), prefix);
         }
 
