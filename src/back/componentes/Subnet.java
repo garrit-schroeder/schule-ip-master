@@ -11,23 +11,23 @@ import java.util.TreeSet;
 
 public class Subnet implements Comparable<Subnet> {
 
-    private final IPAddress subnetIP;
-    private final IPv4Address broadcastIP;
+    private final IPAddress subnetIp;
+    private final IPv4Address broadcastIp;
     private final Integer prefix;
     private final Set<Host> hosts = new TreeSet<>();
 
     public Subnet(IPAddress ip, Integer prefix) {
-        this.subnetIP = ip;
+        this.subnetIp = ip;
         this.prefix = prefix;
-        this.broadcastIP = getBroadcastAddress();
+        this.broadcastIp = getBroadcastAddress();
     }
 
-    public String getBroadcastIP() {
-        return this.broadcastIP.toString();
+    public String getBroadcastIp() {
+        return this.broadcastIp.toString();
     }
 
-    public IPAddress getSubnetIP() {
-        return subnetIP;
+    public IPAddress getSubnetIp() {
+        return subnetIp;
     }
 
     public Integer getPrefix() {
@@ -84,10 +84,14 @@ public class Subnet implements Comparable<Subnet> {
     }
 
     private IPv4Address getBroadcastAddress() {
+        if (subnetIp instanceof IPv6Address) {
+            return null;
+        }
+        //todo nur wenn ipv4 addresse. ipv6 habrn keine broadcast id
         int baseIPnumeric = 0;
         int i = 24;
 
-        String[] st = subnetIP.toString().split("\\.");
+        String[] st = subnetIp.toString().split("\\.");
         for (String aSt : st) {
             baseIPnumeric += Integer.parseInt(aSt) << i;
             i -= 8;
@@ -114,7 +118,7 @@ public class Subnet implements Comparable<Subnet> {
         final int BEFORE = -1;
         final int EQUAL = 0;
         final int AFTER = 1;
-        if (this.getSubnetIP().toString().equals(o.getSubnetIP().toString()) && (this.getPrefix() == o.getPrefix()))
+        if (this.getSubnetIp().toString().equals(o.getSubnetIp().toString()) && (this.getPrefix() == o.getPrefix()))
             return EQUAL;
         if ((this.getPrefix() < o.getPrefix())) return BEFORE;
         if ((this.getPrefix() > o.getPrefix())) return AFTER;
@@ -123,7 +127,7 @@ public class Subnet implements Comparable<Subnet> {
 
     @Override
     public int hashCode() {
-        return subnetIP.toString().hashCode() + prefix.toString().hashCode();
+        return subnetIp.toString().hashCode() + prefix.toString().hashCode();
     }
 
     @Override
@@ -132,6 +136,6 @@ public class Subnet implements Comparable<Subnet> {
             return false;
         }
         Subnet other = (Subnet) object;
-        return (this.getSubnetIP().toString().equals(other.getSubnetIP().toString()) && (this.getPrefix() == other.getPrefix()));
+        return (this.getSubnetIp().toString().equals(other.getSubnetIp().toString()) && (this.getPrefix() == other.getPrefix()));
     }
 }

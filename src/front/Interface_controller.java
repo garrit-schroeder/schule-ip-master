@@ -1,10 +1,7 @@
 package front;
 
 import back.Data_controller;
-import back.componentes.Host;
-import back.componentes.IPv4Address;
-import back.componentes.Network;
-import back.componentes.Subnet;
+import back.componentes.*;
 import front.components.MainFrame;
 
 import javax.swing.*;
@@ -51,8 +48,8 @@ public class Interface_controller {
     public String[] getSubnetInfo() {
         String[] tmp = {"", ""};
         if (currentSubnet != null) {
-            tmp[0] = currentSubnet.getSubnetIP().toString() + "/" + currentSubnet.getPrefix().toString();
-            tmp[1] = currentSubnet.getBroadcastIP();
+            tmp[0] = currentSubnet.getSubnetIp().toString() + "/" + currentSubnet.getPrefix().toString();
+            tmp[1] = currentSubnet.getBroadcastIp();
             return tmp;
         } else {
             return null;
@@ -73,7 +70,7 @@ public class Interface_controller {
         String[] tmp = ipWithPrefix.split(" - ");
         tmp = tmp[0].split("/");
         for (Subnet s : currentNetwork.getSubnets()) {
-            if ((s.getSubnetIP().toString().equals(tmp[0])) &&
+            if ((s.getSubnetIp().toString().equals(tmp[0])) &&
                     Integer.parseInt(tmp[1]) == s.getPrefix()) {
                 currentSubnet = s;
             }
@@ -92,7 +89,7 @@ public class Interface_controller {
         Set<String> addressSet = new TreeSet<String>();
         if (currentNetwork.getSubnets() != null) {
             for (Subnet s : currentNetwork.getSubnets()) {
-                addressSet.add(s.getSubnetIP().toString() + "/" + s.getPrefix() + " - ("
+                addressSet.add(s.getSubnetIp().toString() + "/" + s.getPrefix() + " - ("
                         + s.getDistributedIPVolume() + "/" + s.getMaxHosts() + " Hosts)");
             }
         }
@@ -114,11 +111,17 @@ public class Interface_controller {
     }
 
     public void addNewSubnet(String ip, String prefix) {
-        if (isSubnetInRange(ip, prefix)) {
-            currentNetwork.addSubnet(new IPv4Address(ip), prefix);
+        if (new IPAddress().isIpv4(ip)) {
+            if (isSubnetInRange(new IPv4Address(ip), prefix)) {
+                currentNetwork.addSubnet(new IPv4Address(ip), prefix);
+            } else {
+                errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
+            }
         } else {
-            errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
+            // TODO: 09.06.16  
+            currentNetwork.addSubnet(new IPv6Address(ip), prefix);
         }
+
     }
 
     public void addNewHost(String ip) {
@@ -129,10 +132,10 @@ public class Interface_controller {
 
     public boolean isHostInRange(String hostIp) {
         String[] hostOkt = hostIp.split("\\.");
-        String[] currentSubnetOkt = currentSubnet.getSubnetIP().toString().split("\\.");
+        String[] currentSubnetOkt = currentSubnet.getSubnetIp().toString().split("\\.");
 
         // Host address can not be broadcast address
-        if (currentSubnet.getBroadcastIP().equals(hostIp)) {
+        if (currentSubnet.getBroadcastIp().equals(hostIp)) {
             errorMessage("Host-address can no be the broadcast-address");
             return false;
         }
@@ -161,8 +164,11 @@ public class Interface_controller {
         return true;
     }
 
-    public boolean isSubnetInRange(String subnetIp, String subnetPrefix) {
-        String[] subnetOkt = subnetIp.split("\\.");
+    public boolean isSubnetInRange(IPv4Address subnetIp, String subnetPrefix) {
+        String[] subnetOkt = new String[0];
+        for (int i = 0; i < subnetIp.getAddress().length; i++) {
+            subnetOkt[i] = "" + subnetIp.getAddress()[i];
+        }
         String[] currentNetworkOkt = currentNetwork.getNetworkIP().toString().split("\\.");
         // check if all full bytes of the host part are the same
         if (Integer.parseInt(subnetPrefix) > currentNetwork.getPrefix()) {
@@ -208,6 +214,11 @@ public class Interface_controller {
             errorMessage("The prefix of the subnet has to be greater than the prefix of the current network");
             return false;
         }
+    }
+
+    public boolean isSubnetInRange(IPv6Address subnetIp, String subnetPrefix) {
+        //// TODO: 09.06.16  
+        return true;
     }
 
     public void errorMessage(String msg) {
@@ -260,7 +271,7 @@ public class Interface_controller {
     public String generateNextSubnet() {
         if (getLastSubnet() != null) {
             Subnet lastSub = getLastSubnet();
-            String[] octets = lastSub.getBroadcastIP().split("\\.");
+            String[] octets = lastSub.getBroadcastIp().split("\\.");
             String[] networkIPAddress = currentNetwork.getNetworkIP().toString().split("\\.");
             if ((Integer.parseInt(octets[3]) - Integer.parseInt(networkIPAddress[3])) == 255) {
                 octets[3] = new Integer(0).toString();

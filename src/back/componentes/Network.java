@@ -48,7 +48,7 @@ public class Network implements Comparable<Network> {
         Iterator<Subnet> itr = subnets.iterator();
         while (itr.hasNext()) {
             Subnet e = itr.next();
-            if (e.getSubnetIP().toString().equals(subnetIP.toString()) && e.getPrefix() == prefix) {
+            if (e.getSubnetIp().toString().equals(subnetIP.toString()) && e.getPrefix() == prefix) {
                 itr.remove();
             }
         }
@@ -80,6 +80,6 @@ public class Network implements Comparable<Network> {
             return false;
         }
         Subnet other = (Subnet) object;
-        return (this.getNetworkIP().toString().equals(other.getSubnetIP().toString()) && (this.getPrefix() == other.getPrefix()));
+        return (this.getNetworkIP().toString().equals(other.getSubnetIp().toString()) && (this.getPrefix() == other.getPrefix()));
     }
 }
