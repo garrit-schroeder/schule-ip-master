@@ -11,12 +11,12 @@ import java.util.TreeSet;
 
 public class Subnet implements Comparable<Subnet> {
 
-    private final IPv4Address subnetIP;
+    private final IPAddress subnetIP;
     private final IPv4Address broadcastIP;
     private final Integer prefix;
     private final Set<Host> hosts = new TreeSet<>();
 
-    public Subnet(IPv4Address ip, Integer prefix) {
+    public Subnet(IPAddress ip, Integer prefix) {
         this.subnetIP = ip;
         this.prefix = prefix;
         this.broadcastIP = getBroadcastAddress();
@@ -26,7 +26,7 @@ public class Subnet implements Comparable<Subnet> {
         return this.broadcastIP.toString();
     }
 
-    public IPv4Address getSubnetIP() {
+    public IPAddress getSubnetIP() {
         return subnetIP;
     }
 
@@ -36,7 +36,7 @@ public class Subnet implements Comparable<Subnet> {
 
     public void addHost(String ip) {
         Host host = new Host(ip);
-//todo ipv6 generieren
+        //todo ipv6 generieren
         //  host.setiPv6Address(new IPv6Address());
         hosts.add(host);
     }
@@ -95,7 +95,7 @@ public class Subnet implements Comparable<Subnet> {
         //Calculate Broadcastaddress without Subnets
         int netmaskNumeric = 0xffffffff << (32 - this.prefix);
         if (netmaskNumeric == 0xffffffff) {
-            return new IPv4Address().parseIP("0.0.0.0");
+            return new IPv4Address("0.0.0.0");
         }
         int numberOfBits;
         for (numberOfBits = 0; numberOfBits < 32; numberOfBits++) {
@@ -106,7 +106,7 @@ public class Subnet implements Comparable<Subnet> {
         for (int n = 0; n < (32 - numberOfBits); n++) {
             numberOfIPs = (numberOfIPs << 1) | 0x01;
         }
-        return new IPv4Address().parseIP(convertNumericIpToSymbolic((baseIPnumeric & netmaskNumeric) + numberOfIPs));
+        return new IPv4Address(convertNumericIpToSymbolic((baseIPnumeric & netmaskNumeric) + numberOfIPs));
     }
 
     @Override

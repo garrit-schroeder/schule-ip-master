@@ -40,6 +40,14 @@ public class Interface_controller {
         return currentNetwork.getNetworkIP().toString() + "/" + currentNetwork.getPrefix().toString();
     }
 
+    public String getNetworkIp() {
+        return currentNetwork.getNetworkIP().toString();
+    }
+
+    public String getPrefix() {
+        return currentNetwork.getPrefix().toString();
+    }
+
     public String[] getSubnetInfo() {
         String[] tmp = {"", ""};
         if (currentSubnet != null) {
@@ -107,7 +115,7 @@ public class Interface_controller {
 
     public void addNewSubnet(String ip, String prefix) {
         if (isSubnetInRange(ip, prefix)) {
-            currentNetwork.addSubnet(ip, prefix);
+            currentNetwork.addSubnet(new IPv4Address(ip), prefix);
         } else {
             errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
         }
@@ -149,23 +157,8 @@ public class Interface_controller {
     }
 
     public boolean isNetworkValid(String networkIp, String networkPrefix) {
-        String[] networkOkt = networkIp.split("\\.");
-        for (int i = 4; i > Integer.parseInt(networkPrefix) / 8 + 1; i--) {
-            if (!networkOkt[i - 1].equals("0")) {
-                errorMessage("This is no valid network");
-                return false;
-            }
-        }
-        String checkString = String.format("%8s", Integer.toBinaryString(Integer.parseInt(networkOkt
-                [(int) Math.ceil(Integer.parseInt(networkPrefix) / 8)]))).replace(" ", "0");
-        //lastBitsToCheck
-        if (Integer.parseInt(checkString.substring(Math.max(checkString.length() -
-                (8 - Integer.parseInt(networkPrefix) % 8), 0))) == 0) {
-            return true;
-        } else {
-            errorMessage("Host part of network has to be 0.");
-            return false;
-        }
+        //todo
+        return true;
     }
 
     public boolean isSubnetInRange(String subnetIp, String subnetPrefix) {
@@ -239,12 +232,12 @@ public class Interface_controller {
     }
 
     public void deleteSubnet(String subnet, String prefix) {
-        currentNetwork.deleteSubnet(new IPv4Address().parseIP(subnet), Integer.parseInt(prefix));
+        currentNetwork.deleteSubnet(new IPv4Address(subnet), Integer.parseInt(prefix));
         currentSubnet = null;
     }
 
     public void deleteHost(String subnet) {
-        currentSubnet.deleteHost(new IPv4Address().parseIP(subnet));
+        currentSubnet.deleteHost(new IPv4Address(subnet));
     }
 
     public boolean verifyPrefix(String ip) {
@@ -252,7 +245,7 @@ public class Interface_controller {
     }
 
     private Subnet getLastSubnet() {
-        if(currentNetwork.getSubnets() != null) {
+        if (currentNetwork.getSubnets() != null) {
             Iterator itr = currentNetwork.getSubnets().iterator();
             Object lastSubnet = itr.next();
             while (itr.hasNext()) {

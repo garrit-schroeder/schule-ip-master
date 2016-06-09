@@ -11,15 +11,15 @@ import java.util.TreeSet;
 public class Network implements Comparable<Network> {
 
     private final Set<Subnet> subnets = new TreeSet<Subnet>();
-    private IPv4Address networkIP = new IPv4Address();
+    private IPAddress networkIP;
     private Integer prefix;
 
-    public Network(IPv4Address networkIP, Integer prefix) {
+    public Network(IPAddress networkIP, Integer prefix) {
         this.networkIP = networkIP;
         this.prefix = prefix;
     }
 
-    public IPv4Address getNetworkIP() {
+    public IPAddress getNetworkIP() {
         return networkIP;
     }
 
@@ -28,7 +28,7 @@ public class Network implements Comparable<Network> {
     }
 
     public Set<Subnet> getSubnets() {
-        if(subnets.isEmpty()) {
+        if (subnets.isEmpty()) {
             return null;
         } else {
             return subnets;
@@ -39,8 +39,8 @@ public class Network implements Comparable<Network> {
         subnets.add(subnet);
     }
 
-    public void addSubnet(String subnetIP, String prefix) {
-        subnets.add(new Subnet(new IPv4Address().parseIP(subnetIP), Integer.parseInt(prefix)));
+    public void addSubnet(IPAddress subnetIP, String prefix) {
+        subnets.add(new Subnet(subnetIP, Integer.parseInt(prefix)));
     }
 
     public void deleteSubnet(IPv4Address subnetIP, int prefix) {

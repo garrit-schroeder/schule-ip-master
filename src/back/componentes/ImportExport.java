@@ -46,7 +46,7 @@ public class ImportExport {
             Node networkNode = nodeLst.item(n);
             Element NetworkElmnt = (Element) networkNode;
             //Add new Network to Networklist
-            Network tmpN = new Network(new IPv4Address().parseIP(NetworkElmnt.getAttribute("ip")),
+            Network tmpN = new Network(new IPv4Address(NetworkElmnt.getAttribute("ip")),
                     Integer.parseInt(NetworkElmnt.getAttribute("CIDR")));
             networks.add(tmpN);
             //Parse CIDR & IP && Create subnet element and add to Network
@@ -55,7 +55,7 @@ public class ImportExport {
                 Node SubnetNode = SubLst.item(s);
                 Element SubnetElmnt = (Element) SubnetNode;
                 //Add new Subnet into Networklist
-                Subnet tmpS = new Subnet(new IPv4Address().parseIP(SubnetElmnt.getAttribute("ip")),
+                Subnet tmpS = new Subnet(new IPv4Address(SubnetElmnt.getAttribute("ip")),
                         Integer.parseInt(SubnetElmnt.getAttribute("CIDR")));
                 tmpN.addSubnet(tmpS);
                 //Parse Host and add to Subnet

@@ -206,7 +206,8 @@ public class TabbedPanelSubnets extends TabbedPanel {
 
     private void addSubnet() {
         if (i_control.isNetworkSet() && i_control.getSubnetInfo() == null) {
-            String[] networkInfo = i_control.getNetworkInfo().split("\\/");
+            String networkIp = i_control.getNetworkIp();
+            String prefixString = i_control.getPrefix();
             JTextField prefix = new JTextField(2);
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Prefix:"));
@@ -214,7 +215,7 @@ public class TabbedPanelSubnets extends TabbedPanel {
             int result = JOptionPane.showConfirmDialog(null, myPanel,
                     "Please Enter Your New Subnet Prefix", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION && i_control.verifyPrefix(prefix.getText())) {
-                i_control.addNewSubnet(networkInfo[0], prefix.getText());
+                i_control.addNewSubnet( networkIp, prefix.getText());
                 refreshIndex();
             }
         } else if (i_control.getSubnetInfo() != null && i_control.isNetworkSet()) {
@@ -257,8 +258,7 @@ public class TabbedPanelSubnets extends TabbedPanel {
     }
 
     private void setNetClass() {
-        String[] tmp = i_control.getNetworkInfo().split("\\.");
-        int num = Integer.parseInt(tmp[0]);
+        int num = Integer.parseInt(i_control.getNetworkIp());
         if (isBetween(num, 10, 128)) {
             modell_netclass.addElement("Class A");
         } else if (isBetween(num, 129, 191)) {

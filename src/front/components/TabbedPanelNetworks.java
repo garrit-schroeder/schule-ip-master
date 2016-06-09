@@ -1,6 +1,6 @@
 package front.components;
 
-import back.componentes.IPv4Address;
+import back.componentes.IPAddress;
 import front.Interface_controller;
 
 import javax.swing.*;
@@ -223,7 +223,7 @@ public class TabbedPanelNetworks extends TabbedPanel {
         int result = JOptionPane.showConfirmDialog(null, myPanel,
                 "Please Enter Your New Network", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION
-                && new IPv4Address().verifyIP(ip.getText())) {
+                && new IPAddress().verifyIP(ip.getText())) {
             i_control.addNewNetwork(ip.getText(), prefix.getText());
             refreshIndex();
         }

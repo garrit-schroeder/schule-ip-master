@@ -5,24 +5,26 @@ import java.util.regex.Pattern;
 /**
  * Class to aggregate a PAddress Created by snazari on 29/11/14.
  */
-public class IPv6Address implements Comparable<IPv6Address> {
+public class IPv6Address extends IPAddress implements Comparable<IPv6Address> {
     private final int[] address = {0, 0, 0, 0, 0, 0, 0, 0};
 
-    public IPv6Address(String okt0, String okt1, String okt2, String okt3, String okt4, String okt5, String okt6, String okt7) {
-        address[0] = Integer.parseInt(okt0, 16);
-        address[1] = Integer.parseInt(okt1, 16);
-        address[2] = Integer.parseInt(okt2, 16);
-        address[3] = Integer.parseInt(okt3, 16);
-        address[4] = Integer.parseInt(okt4, 16);
-        address[5] = Integer.parseInt(okt5, 16);
-        address[6] = Integer.parseInt(okt6, 16);
-        address[7] = Integer.parseInt(okt7, 16);
+    public IPv6Address(String ip) {
+        String[] tmpIPString = ip.split(":");
+        address[0] = Integer.parseInt("3FFA", 16);
+        address[1] = Integer.parseInt("FF2B", 16);
+        address[2] = Integer.parseInt("4D", 16);
+        address[3] = Integer.parseInt("A000", 16);
+        address[4] = Integer.parseInt(tmpIPString[4], 16);
+        address[5] = Integer.parseInt(tmpIPString[5], 16);
+        address[6] = Integer.parseInt(tmpIPString[6], 16);
+        address[7] = Integer.parseInt(tmpIPString[7], 16);
     }
+
 
     @Override
     public String toString() {
-        return Integer.toHexString(address[0]) + ":" + address[1] + ":" + address[2] + ":" + address[3] +
-                ":" + address[4] + ":" + address[5] + ":" + address[6] + ":" + address[7];
+        return Integer.toHexString(address[0]) + ":" + Integer.toHexString(address[1]) + ":" + Integer.toHexString(address[2]) + ":" + Integer.toHexString(address[3]) +
+                ":" + Integer.toHexString(address[4]) + ":" + Integer.toHexString(address[5]) + ":" + Integer.toHexString(address[6]) + ":" + Integer.toHexString(address[7]);
     }
 
     @Override

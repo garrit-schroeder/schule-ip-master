@@ -1,6 +1,7 @@
 package back;
 
 import back.componentes.IPv4Address;
+import back.componentes.IPv6Address;
 import back.componentes.ImportExport;
 import back.componentes.Network;
 import org.xml.sax.SAXException;
@@ -20,7 +21,11 @@ public class Data_controller {
     private final Set<Network> networks = new TreeSet<Network>();
 
     public void addNetwork(String ip, String prefix) {
-        networks.add(new Network(new IPv4Address().parseIP(ip), Integer.parseInt(prefix)));
+        if (ip.matches(".*[a-zA-Z]+.*")) {
+            networks.add(new Network(new IPv6Address(ip), Integer.parseInt(prefix)));
+        } else {
+            networks.add(new Network(new IPv4Address(ip), Integer.parseInt(prefix)));
+        }
     }
 
     public Set<Network> getNetworks() {
