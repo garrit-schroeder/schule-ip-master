@@ -255,17 +255,19 @@ public class TabbedPanelSubnets extends TabbedPanel {
     }
 
     private void setNetClass() {
-        int firstOkt = Integer.parseInt(i_control.getNetworkIp().split("\\.")[0]);
-        if (isBetween(firstOkt, 10, 128)) {
-            modell_netclass.addElement("Class A");
-        } else if (isBetween(firstOkt, 129, 191)) {
-            modell_netclass.addElement("Class B");
-        } else if (isBetween(firstOkt, 192, 223)) {
-            modell_netclass.addElement("Class C");
-        } else if (isBetween(firstOkt, 224, 239)) {
-            modell_netclass.addElement("Class E");
-        } else {
-            modell_netclass.addElement("Class D");
+        if (i_control.getNetworkIp().contains(".")) {
+            int firstOkt = Integer.parseInt(i_control.getNetworkIp().split("\\.")[0]);
+            if (isBetween(firstOkt, 10, 128)) {
+                modell_netclass.addElement("Class A");
+            } else if (isBetween(firstOkt, 129, 191)) {
+                modell_netclass.addElement("Class B");
+            } else if (isBetween(firstOkt, 192, 223)) {
+                modell_netclass.addElement("Class C");
+            } else if (isBetween(firstOkt, 224, 239)) {
+                modell_netclass.addElement("Class E");
+            } else {
+                modell_netclass.addElement("Class D");
+            }
         }
     }
 
