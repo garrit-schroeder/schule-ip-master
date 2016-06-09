@@ -54,6 +54,7 @@ public class IPv4Address extends IPAddress implements Comparable<IPv4Address> {
         return pattern.matcher(ip).matches();
     }
 
+    @Override
     public int[] getAddress() {
         return address;
     }

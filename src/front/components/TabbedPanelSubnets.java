@@ -207,7 +207,6 @@ public class TabbedPanelSubnets extends TabbedPanel {
     private void addSubnet() {
         if (i_control.isNetworkSet() && !i_control.isSubnetSet()) {
             String networkIp = i_control.getNetworkIp();
-            String prefixString = i_control.getPrefix();
             JTextField prefix = new JTextField(2);
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Prefix:"));

@@ -41,7 +41,7 @@ public class Interface_controller {
         return currentNetwork.getNetworkIP().toString();
     }
 
-    public String getPrefix() {
+    public String getNetWorkPrefix() {
         return currentNetwork.getPrefix().toString();
     }
 
@@ -166,38 +166,33 @@ public class Interface_controller {
     }
 
     public boolean isSubnetInRange(IPv4Address subnetIp, String subnetPrefix) {
-        String[] subnetOkt = new String[0];
-        for (int i = 0; i < subnetIp.getAddress().length; i++) {
-            subnetOkt[i] = "" + subnetIp.getAddress()[i];
-        }
-        String[] currentNetworkOkt = currentNetwork.getNetworkIP().toString().split("\\.");
+        int[] currentNetworkOkt = currentNetwork.getNetworkIP().getAddress();
         // check if all full bytes of the host part are the same
         if (Integer.parseInt(subnetPrefix) > currentNetwork.getPrefix()) {
             for (int i = 0; i < (int) Math.floor(currentNetwork.getPrefix() / 8); i++) {
-                if (!subnetOkt[i].equals(currentNetworkOkt[i])) {
+                if (subnetIp.getAddress()[i] != currentNetworkOkt[i]) {
                     errorMessage("This subnet is not in the current network");
                     return false;
                 }
             }
             // check if the host parts of a byte are the same (eg. with prefix 9, the first bit of the
             // second byte has to be the same)
-            if (String.format("%8s", Integer.toBinaryString(Integer.parseInt
-                    (subnetOkt[(int) Math.floor(currentNetwork.getPrefix() / 8)]))).
+            if (String.format("%8s", Integer.toBinaryString(
+                    subnetIp.getAddress()[(int) Math.floor(currentNetwork.getPrefix() / 8)])).
                     replace(' ', '0').substring(0, currentNetwork.getPrefix() % 8).
-                    equals(String.format("%8s", Integer.toBinaryString(Integer.
-                            parseInt(currentNetworkOkt[(int) Math.
-                                    floor(currentNetwork.getPrefix() / 8)]))).
+                    equals(String.format("%8s", Integer.toBinaryString((currentNetworkOkt[(int) Math.
+                            floor(currentNetwork.getPrefix() / 8)]))).
                             replace(' ', '0').substring(0, currentNetwork.getPrefix() % 8))) {
 
                 // check if the full bytes after prefix are 0  <-- not that useful anymore.... :'(
                 for (int i = 4; i < Integer.parseInt(subnetPrefix) / 8; i--) {
-                    if (!subnetOkt[i - 1].equals(currentNetworkOkt[i - 1])) {
+                    if (subnetIp.getAddress()[i - 1] != currentNetworkOkt[i - 1]) {
                         errorMessage("Host part of the subnet has to be 0.");
                         return false;
                     }
                 }
-                String checkString = String.format("%8s", Integer.toBinaryString(Integer.parseInt(subnetOkt
-                        [(int) Math.ceil(Integer.parseInt(subnetPrefix) / 8)]))).replace(" ", "0");
+                String checkString = String.format("%8s", Integer.toBinaryString(subnetIp.getAddress()
+                        [(int) Math.ceil(Integer.parseInt(subnetPrefix) / 8)])).replace(" ", "0");
                 //lastBitsToCheck
                 if (Integer.parseInt(checkString.substring(Math.max(checkString.length() -
                         (8 - Integer.parseInt(subnetPrefix) % 8), 0))) == 0) {
