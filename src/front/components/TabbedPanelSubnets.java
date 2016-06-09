@@ -206,7 +206,6 @@ public class TabbedPanelSubnets extends TabbedPanel {
 
     private void addSubnet() {
         if (i_control.isNetworkSet() && !i_control.isSubnetSet()) {
-            String networkIp = i_control.getNetworkIp();
             JTextField prefix = new JTextField(2);
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Prefix:"));
@@ -214,12 +213,13 @@ public class TabbedPanelSubnets extends TabbedPanel {
             int result = JOptionPane.showConfirmDialog(null, myPanel,
                     "Please Enter Your New Subnet Prefix", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION && i_control.verifyPrefix(prefix.getText())) {
-                i_control.addNewSubnet(networkIp, prefix.getText());
+                i_control.addNewSubnet(i_control.getNetworkIp(), prefix.getText());
                 refreshIndex();
             }
-        } else if (!i_control.isSubnetSet() && i_control.isNetworkSet()) {
+        } else if (i_control.isSubnetSet() && i_control.isNetworkSet()) {
+            String subnetPrefix = i_control.getSubnetPrefix();
             if (i_control.generateNextSubnet() != null) {
-                i_control.addNewSubnet(i_control.generateNextSubnet(), i_control.getSubnetPrefix());
+                i_control.addNewSubnet(i_control.generateNextSubnet(), subnetPrefix);
                 refreshIndex();
             } else {
                 i_control.errorMessage("There are no further subnets possible for this network");
