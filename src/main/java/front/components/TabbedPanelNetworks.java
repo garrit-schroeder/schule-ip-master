@@ -1,6 +1,6 @@
 package front.components;
 
-import back.componentes.IPAddress;
+import back.componentes.IPv4Address;
 import front.Interface_controller;
 
 import javax.swing.*;
@@ -21,8 +21,8 @@ public class TabbedPanelNetworks extends TabbedPanel {
     final TabbedPanelHosts panel_hosts;
     private final int btn_height = 120;
     private final Interface_controller i_control;
-    private final FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
-            "XML files (*.xml)", "xml");
+    private final FileNameExtensionFilter jsonfilter = new FileNameExtensionFilter(
+            "JSON files (*.json)", "json");
     private final JPanel panel_txt = new JPanel();
     private final JPanel panel_btn = new JPanel();
     private final JPanel panel_txt_label = new JPanel();
@@ -170,11 +170,11 @@ public class TabbedPanelNetworks extends TabbedPanel {
     protected void exportNetworks() {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle("Specify a file to export");
-        fc.setFileFilter(xmlfilter);
+        fc.setFileFilter(jsonfilter);
         int entry = fc.showSaveDialog(this);
         File selectedFile = fc.getSelectedFile();
-        if (selectedFile != null && !selectedFile.getName().endsWith(".xml")) {
-            selectedFile = new File(selectedFile.getAbsoluteFile() + ".xml");
+        if (selectedFile != null && !selectedFile.getName().endsWith(".json")) {
+            selectedFile = new File(selectedFile.getAbsoluteFile() + ".json");
         }
         if (selectedFile != null || entry == JFileChooser.APPROVE_OPTION) {
             i_control.exportData(selectedFile.getAbsolutePath());
@@ -191,7 +191,7 @@ public class TabbedPanelNetworks extends TabbedPanel {
         JFileChooser fc = new JFileChooser();
         fc.setApproveButtonText("Import");
         fc.setDialogTitle("Import Data");
-        fc.setFileFilter(xmlfilter);
+        fc.setFileFilter(jsonfilter);
         int entry = fc.showOpenDialog(btn_load);
         File selectedFile = fc.getSelectedFile();
         if (selectedFile != null || entry == JFileChooser.APPROVE_OPTION) {
@@ -223,7 +223,7 @@ public class TabbedPanelNetworks extends TabbedPanel {
         int result = JOptionPane.showConfirmDialog(null, myPanel,
                 "Please Enter Your New Network", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION
-                && new IPAddress().verifyIP(ip.getText())) {
+                && new IPv4Address().verifyIP(ip.getText())) {
             i_control.addNewNetwork(ip.getText(), prefix.getText());
             refreshIndex();
         }

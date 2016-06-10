@@ -1,7 +1,10 @@
 package front;
 
 import back.Data_controller;
-import back.componentes.*;
+import back.componentes.Host;
+import back.componentes.IPv4Address;
+import back.componentes.Network;
+import back.componentes.Subnet;
 import front.components.MainFrame;
 
 import javax.swing.*;
@@ -37,24 +40,15 @@ public class Interface_controller {
         return currentNetwork.getNetworkIP().toString() + "/" + currentNetwork.getPrefix().toString();
     }
 
-    public String getNetworkIp() {
-        return currentNetwork.getNetworkIP().toString();
-    }
-
-    public String getNetWorkPrefix() {
-        return currentNetwork.getPrefix().toString();
-    }
-
-    public String getSubnetBroadcastIp() {
-        return currentSubnet.getBroadcastIp();
-    }
-
-    public String getSubnetIp() {
-        return currentSubnet.getSubnetIp().toString();
-    }
-
-    public String getSubnetPrefix() {
-        return currentSubnet.getPrefix().toString();
+    public String[] getSubnetInfo() {
+        String[] tmp = {"", ""};
+        if (currentSubnet != null) {
+            tmp[0] = currentSubnet.getSubnetIP().toString() + "/" + currentSubnet.getPrefix().toString();
+            tmp[1] = currentSubnet.getBroadcastIP();
+            return tmp;
+        } else {
+            return null;
+        }
     }
 
     public void setCurrentNetwork(String ipWithPrefix) {
@@ -62,7 +56,7 @@ public class Interface_controller {
         for (Network n : data_controller.getNetworks()) {
             if ((n.getNetworkIP().toString().equals(tmp[0])) &&
                     Integer.parseInt(tmp[1]) == n.getPrefix()) {
-                currentNetwork = n;
+
             }
         }
     }
@@ -71,7 +65,7 @@ public class Interface_controller {
         String[] tmp = ipWithPrefix.split(" - ");
         tmp = tmp[0].split("/");
         for (Subnet s : currentNetwork.getSubnets()) {
-            if ((s.getSubnetIp().toString().equals(tmp[0])) &&
+            if ((s.getSubnetIP().toString().equals(tmp[0])) &&
                     Integer.parseInt(tmp[1]) == s.getPrefix()) {
                 currentSubnet = s;
             }
@@ -90,7 +84,7 @@ public class Interface_controller {
         Set<String> addressSet = new TreeSet<String>();
         if (currentNetwork.getSubnets() != null) {
             for (Subnet s : currentNetwork.getSubnets()) {
-                addressSet.add(s.getSubnetIp().toString() + "/" + s.getPrefix() + " - ("
+                addressSet.add(s.getSubnetIP().toString() + "/" + s.getPrefix() + " - ("
                         + s.getDistributedIPVolume() + "/" + s.getMaxHosts() + " Hosts)");
             }
         }
@@ -112,17 +106,11 @@ public class Interface_controller {
     }
 
     public void addNewSubnet(String ip, String prefix) {
-        if (new IPAddress().isIpv4(ip)) {
-            if (isSubnetInRange(new IPv4Address(ip), prefix)) {
-                currentNetwork.addSubnet(new IPv4Address(ip), prefix);
-            } else {
-                errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
-            }
+        if (isSubnetInRange(ip, prefix)) {
+            currentNetwork.addSubnet(ip, prefix);
         } else {
-            // TODO: 09.06.16
-            currentNetwork.addSubnet(new IPv6Address(ip), prefix);
+            errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
         }
-
     }
 
     public void addNewHost(String ip) {
@@ -133,10 +121,10 @@ public class Interface_controller {
 
     public boolean isHostInRange(String hostIp) {
         String[] hostOkt = hostIp.split("\\.");
-        String[] currentSubnetOkt = currentSubnet.getSubnetIp().toString().split("\\.");
+        String[] currentSubnetOkt = currentSubnet.getSubnetIP().toString().split("\\.");
 
         // Host address can not be broadcast address
-        if (currentSubnet.getBroadcastIp().equals(hostIp)) {
+        if (currentSubnet.getBroadcastIP().equals(hostIp)) {
             errorMessage("Host-address can no be the broadcast-address");
             return false;
         }
@@ -161,38 +149,55 @@ public class Interface_controller {
     }
 
     public boolean isNetworkValid(String networkIp, String networkPrefix) {
-        //todo
-        return true;
+        String[] networkOkt = networkIp.split("\\.");
+        for (int i = 4; i > Integer.parseInt(networkPrefix) / 8 + 1; i--) {
+            if (!networkOkt[i - 1].equals("0")) {
+                errorMessage("This is no valid network");
+                return false;
+            }
+        }
+        String checkString = String.format("%8s", Integer.toBinaryString(Integer.parseInt(networkOkt
+                [(int) Math.ceil(Integer.parseInt(networkPrefix) / 8)]))).replace(" ", "0");
+        //lastBitsToCheck
+        if (Integer.parseInt(checkString.substring(Math.max(checkString.length() -
+                (8 - Integer.parseInt(networkPrefix) % 8), 0))) == 0) {
+            return true;
+        } else {
+            errorMessage("Host part of network has to be 0.");
+            return false;
+        }
     }
 
-    public boolean isSubnetInRange(IPv4Address subnetIp, String subnetPrefix) {
-        int[] currentNetworkOkt = currentNetwork.getNetworkIP().getAddress();
+    public boolean isSubnetInRange(String subnetIp, String subnetPrefix) {
+        String[] subnetOkt = subnetIp.split("\\.");
+        String[] currentNetworkOkt = currentNetwork.getNetworkIP().toString().split("\\.");
         // check if all full bytes of the host part are the same
         if (Integer.parseInt(subnetPrefix) > currentNetwork.getPrefix()) {
             for (int i = 0; i < (int) Math.floor(currentNetwork.getPrefix() / 8); i++) {
-                if (subnetIp.getAddress()[i] != currentNetworkOkt[i]) {
+                if (!subnetOkt[i].equals(currentNetworkOkt[i])) {
                     errorMessage("This subnet is not in the current network");
                     return false;
                 }
             }
             // check if the host parts of a byte are the same (eg. with prefix 9, the first bit of the
             // second byte has to be the same)
-            if (String.format("%8s", Integer.toBinaryString(
-                    subnetIp.getAddress()[(int) Math.floor(currentNetwork.getPrefix() / 8)])).
+            if (String.format("%8s", Integer.toBinaryString(Integer.parseInt
+                    (subnetOkt[(int) Math.floor(currentNetwork.getPrefix() / 8)]))).
                     replace(' ', '0').substring(0, currentNetwork.getPrefix() % 8).
-                    equals(String.format("%8s", Integer.toBinaryString((currentNetworkOkt[(int) Math.
-                            floor(currentNetwork.getPrefix() / 8)]))).
+                    equals(String.format("%8s", Integer.toBinaryString(Integer.
+                            parseInt(currentNetworkOkt[(int) Math.
+                                    floor(currentNetwork.getPrefix() / 8)]))).
                             replace(' ', '0').substring(0, currentNetwork.getPrefix() % 8))) {
 
                 // check if the full bytes after prefix are 0  <-- not that useful anymore.... :'(
                 for (int i = 4; i < Integer.parseInt(subnetPrefix) / 8; i--) {
-                    if (subnetIp.getAddress()[i - 1] != currentNetworkOkt[i - 1]) {
+                    if (!subnetOkt[i - 1].equals(currentNetworkOkt[i - 1])) {
                         errorMessage("Host part of the subnet has to be 0.");
                         return false;
                     }
                 }
-                String checkString = String.format("%8s", Integer.toBinaryString(subnetIp.getAddress()
-                        [(int) Math.ceil(Integer.parseInt(subnetPrefix) / 8)])).replace(" ", "0");
+                String checkString = String.format("%8s", Integer.toBinaryString(Integer.parseInt(subnetOkt
+                        [(int) Math.ceil(Integer.parseInt(subnetPrefix) / 8)]))).replace(" ", "0");
                 //lastBitsToCheck
                 if (Integer.parseInt(checkString.substring(Math.max(checkString.length() -
                         (8 - Integer.parseInt(subnetPrefix) % 8), 0))) == 0) {
@@ -210,11 +215,6 @@ public class Interface_controller {
             errorMessage("The prefix of the subnet has to be greater than the prefix of the current network");
             return false;
         }
-    }
-
-    public boolean isSubnetInRange(IPv6Address subnetIp, String subnetPrefix) {
-        //// TODO: 09.06.16  
-        return true;
     }
 
     public void errorMessage(String msg) {
@@ -239,12 +239,12 @@ public class Interface_controller {
     }
 
     public void deleteSubnet(String subnet, String prefix) {
-        currentNetwork.deleteSubnet(new IPv4Address(subnet), Integer.parseInt(prefix));
+        currentNetwork.deleteSubnet(new IPv4Address().parseIP(subnet), Integer.parseInt(prefix));
         currentSubnet = null;
     }
 
     public void deleteHost(String subnet) {
-        currentSubnet.deleteHost(new IPv4Address(subnet));
+        currentSubnet.deleteHost(new IPv4Address().parseIP(subnet));
     }
 
     public boolean verifyPrefix(String ip) {
@@ -252,7 +252,7 @@ public class Interface_controller {
     }
 
     private Subnet getLastSubnet() {
-        if (currentNetwork.getSubnets() != null) {
+        if(currentNetwork.getSubnets() != null) {
             Iterator itr = currentNetwork.getSubnets().iterator();
             Object lastSubnet = itr.next();
             while (itr.hasNext()) {
@@ -265,32 +265,28 @@ public class Interface_controller {
     }
 
     public String generateNextSubnet() {
-
-        if (getLastSubnet() != null && getLastSubnet().getSubnetIp() instanceof IPv4Address) {
+        if (getLastSubnet() != null) {
             Subnet lastSub = getLastSubnet();
-            String[] octets = lastSub.getBroadcastIp().split("\\.");
+            String[] octets = lastSub.getBroadcastIP().split("\\.");
             String[] networkIPAddress = currentNetwork.getNetworkIP().toString().split("\\.");
             if ((Integer.parseInt(octets[3]) - Integer.parseInt(networkIPAddress[3])) == 255) {
-                octets[3] = Integer.toString(0);
+                octets[3] = new Integer(0).toString();
                 if ((Integer.parseInt(octets[2]) - Integer.parseInt(networkIPAddress[2])) == 255) {
-                    octets[2] = Integer.toString(0);
-                    octets[1] = Integer.toString(Integer.parseInt(octets[1]) + 1);
+                    octets[2] = new Integer(0).toString();
+                    octets[1] = new Integer(Integer.parseInt(octets[1]) + 1).toString();
                 } else {
-                    octets[2] = Integer.toString(Integer.parseInt(octets[2]) + 1);
+                    octets[2] = new Integer(Integer.parseInt(octets[2]) + 1).toString();
                 }
             } else {
-                octets[3] = Integer.toString(Integer.parseInt(octets[3]) + 1);
+                octets[3] = new Integer(Integer.parseInt(octets[3]) + 1).toString();
             }
             if (Integer.parseInt(octets[1]) > 255) {
                 return null;
             } else {
                 return octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
             }
-        } else if (getLastSubnet() != null && getLastSubnet().getSubnetIp() instanceof IPv6Address) {
-            //todo ipv6
+        } else {
             return null;
-        } else
-            return null;
+        }
     }
-
 }

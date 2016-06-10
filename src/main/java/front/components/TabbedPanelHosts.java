@@ -1,6 +1,6 @@
 package front.components;
 
-import back.componentes.IPAddress;
+import back.componentes.IPv4Address;
 import front.Interface_controller;
 
 import javax.swing.*;
@@ -229,7 +229,7 @@ public class TabbedPanelHosts extends TabbedPanel {
 
             if (result == JOptionPane.OK_OPTION) {
                 if (ip.getText() != null && !ip.getText().isEmpty() &&
-                        new IPAddress().verifyIP(ip.getText())) {
+                        new IPv4Address().verifyIP(ip.getText())) {
                     i_control.addNewHost(ip.getText());
                 } else if (verifyBinaryString(firstOctet.getText(), secondOctet.getText(),
                         thirdOctet.getText(), fourthOctet.getText())) {
@@ -259,11 +259,12 @@ public class TabbedPanelHosts extends TabbedPanel {
         for (String s : hosts) {
             modell_hosts.addElement(s);
         }
-        if (i_control.getSubnetIp() != null && i_control.getSubnetPrefix() != null && i_control.getSubnetBroadcastIp() != null) {
+        String[] tmpInfo = i_control.getSubnetInfo();
+        if (tmpInfo != null && tmpInfo.length > 0) {
             modell_subnetaddress.removeAllElements();
-            modell_subnetaddress.addElement(i_control.getSubnetIp() + "/" + i_control.getSubnetPrefix());
+            modell_subnetaddress.addElement(tmpInfo[0]);
             modell_broadcastaddress.removeAllElements();
-            modell_broadcastaddress.addElement(i_control.getSubnetBroadcastIp());
+            modell_broadcastaddress.addElement(tmpInfo[1]);
         }
     }
 
