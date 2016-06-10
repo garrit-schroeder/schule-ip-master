@@ -1,5 +1,6 @@
 package back.componentes;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -7,6 +8,7 @@ import java.util.regex.Pattern;
  */
 public class IPv4Address implements Comparable<IPv4Address> {
     public final int[] address = {0, 0, 0, 0};
+    public String addressString = "";
 
     public IPv4Address() {
     }
@@ -16,6 +18,16 @@ public class IPv4Address implements Comparable<IPv4Address> {
         address[1] = okt1;
         address[2] = okt2;
         address[3] = okt3;
+        addressString = this.toString();
+
+    }
+    public IPv4Address(String ip){
+       String[] res = ip.split("\\.");
+        address[0] = Integer.parseInt(res[0]);
+        address[1] = Integer.parseInt(res[1]);
+        address[2] = Integer.parseInt(res[2]);
+        address[3] = Integer.parseInt(res[3]);
+        addressString = ip;
     }
 
     @Override

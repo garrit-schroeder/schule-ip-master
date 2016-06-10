@@ -56,7 +56,7 @@ public class Interface_controller {
         for (Network n : data_controller.getNetworks()) {
             if ((n.getNetworkIP().toString().equals(tmp[0])) &&
                     Integer.parseInt(tmp[1]) == n.getPrefix()) {
-
+                currentNetwork = n;
             }
         }
     }
