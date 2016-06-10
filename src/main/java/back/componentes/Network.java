@@ -12,15 +12,34 @@ public class Network implements Comparable<Network> {
 
     private final Set<Subnet> subnets = new TreeSet<Subnet>();
     private IPv4Address networkIP = new IPv4Address();
+    private IPv6Address networkIP6;
+    private String type = "";
+
     private Integer prefix;
 
     public Network(IPv4Address networkIP, Integer prefix) {
         this.networkIP = networkIP;
         this.prefix = prefix;
+        this.type = "4";
+
+    }
+    public Network(String ip6,Integer prefix){
+        this.networkIP6 = new IPv6Address(ip6);
+        this.prefix = prefix;
+        this.type = "6";
     }
 
     public IPv4Address getNetworkIP() {
         return networkIP;
+    }
+
+    public String getIP(){
+        if(isIp6()){
+            return this.networkIP6.toString();
+         }
+        else{
+            return this.networkIP.toString();
+        }
     }
 
     public Integer getPrefix() {
@@ -74,12 +93,34 @@ public class Network implements Comparable<Network> {
         return networkIP.toString().hashCode() + prefix.toString().hashCode();
     }
 
+    public boolean isIp6(){
+        boolean res = false;
+        if(this.type == "6"){
+            res = true;
+        }
+        return res;
+    }
+    public boolean isIp4(){
+        boolean res = false;
+        if(this.type == "4"){
+            res = true;
+        }
+        return res;
+    }
     @Override
     public boolean equals(Object object) {
+        boolean res = false;
         if (!(object instanceof Subnet)) {
-            return false;
+            return res;
         }
         Subnet other = (Subnet) object;
-        return (this.getNetworkIP().toString().equals(other.getSubnetIP().toString()) && (this.getPrefix() == other.getPrefix()));
+        if(isIp4()){
+            res =  (this.getNetworkIP().toString().equals(other.getSubnetIP().toString()) && (this.getPrefix() == other.getPrefix()));
+        }
+        if(isIp6()){
+            //TODO equals ip6
+            return res;
+        }
+        return res;
     }
 }

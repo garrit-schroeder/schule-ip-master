@@ -18,13 +18,45 @@ public class IPv6Address implements Comparable<IPv6Address> {
         address[6] = Integer.parseInt(okt6, 16);
         address[7] = Integer.parseInt(okt7, 16);
     }
+    public IPv6Address(String line){
+        String[] res = line.split(":");
 
+
+        address[0] = Integer.parseInt(res[0],16);
+        address[1] = Integer.parseInt(res[1],16);
+        address[2] = Integer.parseInt(res[2],16);
+        address[3] = Integer.parseInt(res[3],16);
+        address[4] = Integer.parseInt(res[4],16);
+        address[5] = Integer.parseInt(res[5],16);
+        address[6] = Integer.parseInt(res[6],16);
+        address[7] = Integer.parseInt(res[7],16);
+
+
+    }
+    public IPv6Address(){
+
+    }
+    public void setAddress(String ip){
+
+    }
     @Override
     public String toString() {
         return Integer.toHexString(address[0]) + ":" + address[1] + ":" + address[2] + ":" + address[3] +
                 ":" + address[4] + ":" + address[5] + ":" + address[6] + ":" + address[7];
     }
+    public void setIp(String line){
+        String[] res = line.split("\\:");
+        address[0] = Integer.parseInt(res[0]);
+        address[1] = Integer.parseInt(res[1]);
+        address[2] = Integer.parseInt(res[2]);
+        address[3] = Integer.parseInt(res[3]);
+        address[4] = Integer.parseInt(res[4]);
+        address[5] = Integer.parseInt(res[5]);
+        address[6] = Integer.parseInt(res[6]);
+        address[7] = Integer.parseInt(res[7]);
 
+
+    }
     @Override
     public int compareTo(IPv6Address o) {
         return this.toString().equals(o.toString()) ? 0 : 1;

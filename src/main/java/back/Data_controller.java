@@ -1,10 +1,8 @@
 package back;
 
-import back.componentes.IPv4Address;
-import back.componentes.ImportExport;
-import back.componentes.Network;
+import back.componentes.*;
 import org.xml.sax.SAXException;
-import back.componentes.SaveLoad;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
@@ -20,7 +18,12 @@ public class Data_controller {
     private final Set<Network> networks = new TreeSet<Network>();
 
     public void addNetwork(String ip, String prefix) {
-        networks.add(new Network(new IPv4Address().parseIP(ip), Integer.parseInt(prefix)));
+        if(ipChecker.isIp4(ip)){
+            networks.add(new Network(new IPv4Address(ip), Integer.parseInt(prefix)));
+        }
+        else{
+            networks.add(new Network(ip, Integer.parseInt(prefix)));
+        }
     }
 
     public Set<Network> getNetworks() {

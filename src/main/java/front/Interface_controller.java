@@ -75,7 +75,7 @@ public class Interface_controller {
     public Set<String> loadNetworksIntoDialog() {
         Set<String> addressSet = new TreeSet<String>();
         for (Network n : data_controller.getNetworks()) {
-            addressSet.add(n.getNetworkIP().toString() + "/" + n.getPrefix());
+            addressSet.add(n.getIP() + "/" + n.getPrefix());
         }
         return addressSet;
     }
@@ -149,21 +149,48 @@ public class Interface_controller {
     }
 
     public boolean isNetworkValid(String networkIp, String networkPrefix) {
-        String[] networkOkt = networkIp.split("\\.");
-        for (int i = 4; i > Integer.parseInt(networkPrefix) / 8 + 1; i--) {
-            if (!networkOkt[i - 1].equals("0")) {
-                errorMessage("This is no valid network");
+        if(isIp4(networkIp)){
+            String[] networkOkt = networkIp.split("\\.");
+            for (int i = 4; i > Integer.parseInt(networkPrefix) / 8 + 1; i--) {
+                if (!networkOkt[i - 1].equals("0")) {
+                    errorMessage("This is no valid network");
+                    return false;
+                }
+            }
+            String checkString = String.format("%8s", Integer.toBinaryString(Integer.parseInt(networkOkt
+                    [(int) Math.ceil(Integer.parseInt(networkPrefix) / 8)]))).replace(" ", "0");
+            //lastBitsToCheck
+            if (Integer.parseInt(checkString.substring(Math.max(checkString.length() -
+                    (8 - Integer.parseInt(networkPrefix) % 8), 0))) == 0) {
+                return true;
+            } else {
+                errorMessage("Host part of network has to be 0.");
                 return false;
             }
         }
-        String checkString = String.format("%8s", Integer.toBinaryString(Integer.parseInt(networkOkt
-                [(int) Math.ceil(Integer.parseInt(networkPrefix) / 8)]))).replace(" ", "0");
-        //lastBitsToCheck
-        if (Integer.parseInt(checkString.substring(Math.max(checkString.length() -
-                (8 - Integer.parseInt(networkPrefix) % 8), 0))) == 0) {
+        else if(isIp6(networkIp)){
+            //TODO check for valid IP6
             return true;
-        } else {
-            errorMessage("Host part of network has to be 0.");
+        }
+
+        return false;
+
+
+    }
+
+    public boolean isIp6(String ip){
+        if(ip.split("\\:").length > 1){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public boolean isIp4(String ip){
+        if(ip.split("\\.").length > 1){
+            return true;
+        }
+        else{
             return false;
         }
     }

@@ -57,7 +57,7 @@ public class SaveLoad {
                 ArrayList<LinkedHashMap> l1 = (ArrayList<LinkedHashMap>) l.get("subnets");
                 for (LinkedHashMap lh: l1
                      ) {
-                    //network.addSubnet();
+                    //network.addSubnet(lh.);
                 }
             }
         } catch (JsonGenerationException e) {

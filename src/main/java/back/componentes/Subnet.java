@@ -35,8 +35,8 @@ public class Subnet implements Comparable<Subnet> {
     }
 
     public void addHost(String ip) {
-        Host host = new Host(ip);
-//todo ipv6 generieren
+        Host host = new Host(new IPv4Address(ip));
+        //todo ipv6 generieren
         //  host.setiPv6Address(new IPv6Address());
         hosts.add(host);
     }

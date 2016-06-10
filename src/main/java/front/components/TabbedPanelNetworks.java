@@ -1,6 +1,7 @@
 package front.components;
 
 import back.componentes.IPv4Address;
+import back.componentes.ipChecker;
 import front.Interface_controller;
 
 import javax.swing.*;
@@ -142,13 +143,27 @@ public class TabbedPanelNetworks extends TabbedPanel {
                     String hover = list_networks.getModel().getElementAt(list_networks.locationToIndex(
                             new Point(e.getX(), e.getY()))).toString();
                     if (hover != null && !hover.isEmpty()) {
+                        //TODO ip6 binary
                         String[] binaryIpArray = hover.split("/");
-                        binaryIpArray = binaryIpArray[0].split("\\.");
-                        list_networks.setToolTipText(String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[0]))).replace(" ", "0")
-                                + "." + String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[1]))).replace(" ", "0")
-                                + "." + String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[2]))).replace(" ", "0")
-                                + "." + String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[3]))).replace(" ", "0"));
-                    }
+                        if(ipChecker.isIp4(binaryIpArray[0])){
+                            binaryIpArray = binaryIpArray[0].split("\\.");
+                            list_networks.setToolTipText(String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[0]))).replace(" ", "0")
+                                    + "." + String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[1]))).replace(" ", "0")
+                                    + "." + String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[2]))).replace(" ", "0")
+                                    + "." + String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[3]))).replace(" ", "0"));
+
+                        }else{
+                            binaryIpArray = binaryIpArray[0].split("\\:");
+                            String res = "";
+                            for (String s:binaryIpArray
+                                 ) {
+                                res += String.format("%8s", Integer.toBinaryString(Integer.parseInt(binaryIpArray[0],16))).replace(" ", "0");
+
+                            }
+                            list_networks.setToolTipText(res);
+
+                        }
+                       }
                 }
             }
         });
@@ -223,7 +238,7 @@ public class TabbedPanelNetworks extends TabbedPanel {
         int result = JOptionPane.showConfirmDialog(null, myPanel,
                 "Please Enter Your New Network", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION
-                && new IPv4Address().verifyIP(ip.getText())) {
+                &&  ipChecker.verifyIP(ip.getText())) {
             i_control.addNewNetwork(ip.getText(), prefix.getText());
             refreshIndex();
         }
