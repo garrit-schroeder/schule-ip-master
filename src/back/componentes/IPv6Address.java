@@ -50,4 +50,9 @@ public class IPv6Address extends IPAddress implements Comparable<IPv6Address> {
                 .compile("^(((([a-f]|[0-9]){1,4})|:):){7}\\2");
         return pattern.matcher(ip).matches();
     }
+
+    @Override
+    public int[] getAddress() {
+        return address;
+    }
 }

@@ -23,7 +23,6 @@ public class IPv4Address extends IPAddress implements Comparable<IPv4Address> {
         address[3] = Integer.parseInt(tmpIPString[3]);
     }
 
-
     @Override
     public String toString() {
         return address[0] + "." + address[1] + "." + address[2] + "." + address[3];
