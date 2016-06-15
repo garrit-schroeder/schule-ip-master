@@ -4,10 +4,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * Network Class to aggregate a Network
- * Created by snazari on 29/11/14.
- */
 public class Network implements Comparable<Network> {
 
     private final Set<Subnet> subnets = new TreeSet<Subnet>();
