@@ -2,9 +2,6 @@ package back.componentes;
 
 import java.util.regex.Pattern;
 
-/**
- * Class to aggregate a PAddress Created by snazari on 29/11/14.
- */
 public class IPv4Address extends IPAddress implements Comparable<IPv4Address> {
     private final int[] address = {0, 0, 0, 0};
 

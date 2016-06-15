@@ -20,10 +20,6 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * Import/Export Class for IPCalculator
- * Created by snazari on 29/11/14.
- */
 public class ImportExport {
 
     private final String path;

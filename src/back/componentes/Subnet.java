@@ -4,11 +4,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * Subnet Class to aggregate a Subnet
- * Created by snazari on 29/11/14.
- */
-
 public class Subnet implements Comparable<Subnet> {
 
     private final IPAddress subnetIp;

@@ -11,9 +11,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Created by snazari on 29/11/14.
- */
 public class Interface_controller {
 
     private final Data_controller data_controller = new Data_controller();
@@ -213,7 +210,7 @@ public class Interface_controller {
     }
 
     public boolean isSubnetInRange(IPv6Address subnetIp, String subnetPrefix) {
-        //// TODO: 09.06.16  
+        //// TODO: 09.06.16
         return true;
     }
 

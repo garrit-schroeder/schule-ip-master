@@ -9,10 +9,6 @@ import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    /**
-     * created by luca on 04/12/14
-     */
-
     private final String title = "Network-Address Calculator";
     private final int width = 800;
     private final int height = 600;

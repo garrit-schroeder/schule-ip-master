@@ -13,9 +13,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * Created by snazari on 29/11/14.
- */
 public class Data_controller {
 
     private final Set<Network> networks = new TreeSet<Network>();
