@@ -197,9 +197,6 @@ public class TabbedPanelSubnets extends TabbedPanel {
 
             @Override
             public void valueChanged(ListSelectionEvent i) {
-                System.out.println(list_subnets.isSelectionEmpty());
-                System.out.println(list_subnets.getValueIsAdjusting());
-
                 if (!list_subnets.isSelectionEmpty()) {
                     i_control.setCurrentSubnet(list_subnets.getSelectedValue().toString());
                 }
