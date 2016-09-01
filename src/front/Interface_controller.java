@@ -15,6 +15,15 @@ public class Interface_controller {
 
     private final Data_controller data_controller = new Data_controller();
     private final MainFrame mainFrame;
+
+    public Subnet getCurrentSubnet() {
+        return currentSubnet;
+    }
+
+    public Network getCurrentNetwork() {
+        return currentNetwork;
+    }
+
     private Network currentNetwork;
     private Subnet currentSubnet;
 
@@ -112,6 +121,7 @@ public class Interface_controller {
         if (new IPAddress().isIpv4(ip)) {
             if (isSubnetInRange(new IPv4Address(ip), prefix)) {
                 currentNetwork.addSubnet(new IPv4Address(ip), prefix);
+
             } else {
                 errorMessage(ip + "/" + prefix + " not in range of " + currentNetwork.getNetworkIP() + "/" + currentNetwork.getPrefix());
             }

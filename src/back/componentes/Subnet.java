@@ -17,6 +17,10 @@ public class Subnet implements Comparable<Subnet> {
         this.broadcastIp = getBroadcastAddress();
     }
 
+    public long getDecimalIp(){
+        long x =  new IPAddress().ipToLong(this.subnetIp);
+        return x;
+    }
     public int getSubnetId() {
         return subnetIp.getAddress()[3];
     }
@@ -37,7 +41,7 @@ public class Subnet implements Comparable<Subnet> {
         Host host = new Host(ip);
         //todo ipv6 generieren
         //  host.setiPv6Address(new IPv6Address());
-        host.getiPv6Address().getAddress()[3] = getSubnetId();
+        //host.getiPv6Address().getAddress()[3] = getSubnetId();
         hosts.add(host);
     }
 

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.net.InetAddress;
 import java.util.Set;
 
 public class TabbedPanelNetworks extends TabbedPanel {
@@ -53,9 +54,15 @@ public class TabbedPanelNetworks extends TabbedPanel {
         // ActionListener for Buttons
         btn_new_network.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                addNetwork();
+            public void actionPerformed(ActionEvent e){
+                try{
+                    addNetwork();
+                }
+                catch (Exception err){
+                    System.out.println("error occured");
+                }
             }
+
         });
         btn_delete_network.addActionListener(new ActionListener() {
 
@@ -211,20 +218,25 @@ public class TabbedPanelNetworks extends TabbedPanel {
         }
     }
 
-    protected void addNetwork() {
+    protected void addNetwork() throws Exception{
         JTextField ip = new JTextField(15);
-        JTextField prefix = new JTextField(2);
+        JTextField prefix = new JTextField(15);
         JPanel myPanel = new JPanel();
         myPanel.add(new JLabel("IP:"));
         myPanel.add(ip);
         myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-        myPanel.add(new JLabel("Prefix:"));
+        myPanel.add(new JLabel("CIDR-Prefix or Subnetmask:"));
         myPanel.add(prefix);
         int result = JOptionPane.showConfirmDialog(null, myPanel,
                 "Please Enter Your New Network", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION
                 && new IPAddress().verifyIP(ip.getText())) {
-            i_control.addNewNetwork(ip.getText(), prefix.getText());
+            if(prefix.getText().length() > 2){
+                i_control.addNewNetwork(ip.getText(),"" + new IPAddress().convertNetmaskToCIDR(InetAddress.getByName(prefix.getText())));
+            }
+            else{
+                i_control.addNewNetwork(ip.getText(), prefix.getText());
+            }
             refreshIndex();
         }
     }

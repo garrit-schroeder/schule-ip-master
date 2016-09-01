@@ -7,7 +7,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 
-public class MainFrame extends JFrame {
+    public class MainFrame extends JFrame {
 
     private final String title = "Network-Address Calculator";
     private final int width = 800;

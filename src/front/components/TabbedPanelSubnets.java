@@ -207,15 +207,54 @@ public class TabbedPanelSubnets extends TabbedPanel {
     private void addSubnet() {
         if (i_control.isNetworkSet() && !i_control.isSubnetSet()) {
             JTextField prefix = new JTextField(2);
+            JTextField hostCount = new JTextField(8);
+
             JPanel myPanel = new JPanel();
             myPanel.add(new JLabel("Prefix:"));
             myPanel.add(prefix);
+            myPanel.add(new JLabel("Amount of Hosts:"));
+            myPanel.add(hostCount);
+            String[] test = {hostCount.getText(),prefix.getText()};
+
             int result = JOptionPane.showConfirmDialog(null, myPanel,
-                    "Please Enter Your New Subnet Prefix", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.OK_OPTION && i_control.verifyPrefix(prefix.getText())) {
-                i_control.addNewSubnet(i_control.getNetworkIp(), prefix.getText());
-                refreshIndex();
+                    "Enter Subnet Prefix or Host amount", JOptionPane.OK_CANCEL_OPTION);
+            if(prefix.getText().equals("") && hostCount.getText().equals("")){
+                i_control.errorMessage("Please enter either Host amount OR prefix");
             }
+            else if(!prefix.getText().equals("") && !hostCount.getText().equals("")) {
+                i_control.errorMessage("Please choose either Host amount OR prefix and not both");
+            }
+            else if(!prefix.getText().equals("") && hostCount.getText().equals("")){
+                if (result == JOptionPane.OK_OPTION && i_control.verifyPrefix(prefix.getText()) ) {
+                    if (i_control.generateNextSubnet() != null) {
+                        i_control.addNewSubnet(i_control.generateNextSubnet(), prefix.getText());
+                        refreshIndex();
+                    }
+                    else if(i_control.getCurrentSubnet() == null){
+                        String x = i_control.getCurrentNetwork().getNetworkIP().toString();
+                        i_control.addNewSubnet(x, prefix.getText());
+                        refreshIndex();
+                    }
+                }
+            }
+            else if(prefix.getText().equals("") && !hostCount.getText().equals("")){
+                String temp = calculatePrefixForHostCount(Integer.parseInt(hostCount.getText()),i_control.getCurrentNetwork().getPrefix());
+                if (result == JOptionPane.OK_OPTION && i_control.verifyPrefix(temp)) {
+
+                    if (i_control.generateNextSubnet() != null) {
+                        i_control.addNewSubnet(i_control.generateNextSubnet(), temp);
+                        refreshIndex();
+                    }
+                    else if(i_control.getCurrentSubnet() == null){
+                        String x = i_control.getCurrentNetwork().getNetworkIP().toString();
+                        i_control.addNewSubnet(x, temp);
+                        refreshIndex();
+                    }
+                }
+            }
+
+
+
         } else if (i_control.isSubnetSet() && i_control.isNetworkSet()) {
             String subnetPrefix = i_control.getSubnetPrefix();
             if (i_control.generateNextSubnet() != null) {
@@ -227,6 +266,19 @@ public class TabbedPanelSubnets extends TabbedPanel {
         }
     }
 
+    public String calculatePrefixForHostCount(int hosts,int subnetPrefix){
+        String res = "0";
+       for(int i = 32;i > subnetPrefix;i--)
+       {
+           int y  = 32-i;
+          int x = (int) Math.pow(2,y)-2;
+           if(x >= hosts){
+               return "" +i;
+           }
+
+       }
+        return res;
+    }
     private void deleteSubnet() {
         if (!list_subnets.isSelectionEmpty()) {
             String[] tmp = list_subnets.getSelectedValue().toString().split(" - ");
